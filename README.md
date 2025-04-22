@@ -130,7 +130,7 @@ keenetic
 opkg update
 opkg install ca-certificates wget-ssl
 opkg remove wget-nossl
-wget -q -O /tmp/ipsh.sh https://raw.githubusercontent.com/Neytrino-OnLine/ipsh/refs/heads/main/ipsh.sh
+wget -q -O /opt/bin/ipsh https://raw.githubusercontent.com/Neytrino-OnLine/ipsh/refs/heads/main/ipsh.sh
 chmod +x /opt/bin/ipsh
 
 ````
