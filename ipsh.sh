@@ -2087,17 +2087,17 @@ case "$1" in
 	exit
 	;;
 
--u)	headLine "Обновление"
+-u)	headLine "Обновление IPSh"
 	echo "`opkg update`" > /dev/null
 	echo "`opkg install ca-certificates wget-ssl`" > /dev/null
 	echo "`opkg remove wget-nossl`" > /dev/null
-	wget -O /tmp/ipsh.sh https://raw.githubusercontent.com/Neytrino-OnLine/ipsh/refs/heads/main/ipsh.sh
+	wget -q -O /tmp/ipsh.sh https://raw.githubusercontent.com/Neytrino-OnLine/ipsh/refs/heads/main/ipsh.sh
 	if [ ! -n "`cat "/tmp/ipsh.sh" | grep 'function interfaceID'`" ];then
 		messageBox "Не удалось загрузить файл." "\033[91m"
 	else
 		mv /tmp/ipsh.sh /opt/bin/ipsh
 		chmod +x /opt/bin/ipsh
-		messageBox "Сейчас, версия IPSh: `cat "/opt/bin/ipsh" | grep '^VERSION="' | awk -F"=" '{print $2}'`"
+		messageBox "Сейчас, версия IPSh: `cat "/opt/bin/ipsh" | grep '^VERSION="' | awk -F"=" '{print $2}' | awk '{gsub(/"/,"")}1'`"
 	fi
 	exit
 	;;
