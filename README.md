@@ -50,7 +50,7 @@ components list legacy
 - [mips](https://bin.entware.net/mipssf-k3.4/installer/mips-installer.tar.gz)
 - [aarch64](https://bin.entware.net/aarch64-k3.10/installer/aarch64-installer.tar.gz)
 
-▪ Определить, архитектуру вашего устройства - не так просто, как хотелось бы... Открываем интерфейс командной строки (обычно это):
+Определить, архитектуру вашего устройства - не так просто, как хотелось бы... Открываем интерфейс командной строки (обычно это):
 
 ```
 http://192.168.1.1/a
@@ -85,7 +85,7 @@ show version
 192.168.1.1
 ```
 
-В поле "Port" - оставляем:
+▪ В поле "Port" - оставляем:
 
 ```
 22
@@ -102,12 +102,12 @@ show version
 
 ![Screenshot](screenshots/p-3.png)</details>
 
-На запрос имени пользователя (login as) вводим:
+▪ На запрос имени пользователя (login as) вводим:
 
 ```
 root
 ```
-Нажимаем ввод, а на запрос пароля (root@192.168.1.1's password):
+▪ Нажимаем ввод. На запрос пароля (root@192.168.1.1's password):
 
 ```
 keenetic
@@ -121,7 +121,7 @@ keenetic
 ![Screenshot](screenshots/p-4.png)</details>
 </details>
 <details><summary>Если ПК под рукой нет (но есть смартфон)...</summary>
-▪ Устанавливаем ConnectBot [GooglePlay](https://play.google.com/store/apps/details?id=org.connectbot)/[RuStore](https://www.rustore.ru/catalog/app/org.connectbot) и открываем его...
+▪ Устанавливаем ConnectBot [GooglePlay](https://play.google.com/store/apps/details?id=org.connectbot) / [RuStore](https://www.rustore.ru/catalog/app/org.connectbot) и открываем его...
 
 <details><summary>Нажимаем кнопку "+" (в нижней части экрана)...</summary>
 
@@ -151,10 +151,9 @@ root
 ```
 22
 ```
-
 > (или вводим "222", если до установки Entware в прошивке уже был установлен компонент "Сервер SSH")
 
-И нажимаем кнопку "Назад"...
+▪ Нажимаем кнопку "Назад"...
 
 <details><summary>Возвращаемся к списку серверов и выбираем (добавленный) сервер...</summary>
 
@@ -172,7 +171,7 @@ root
 keenetic
 ```
 
-И нажимаем ввод...
+▪ Нажимаем ввод...
 
 <details><summary>Если всё правильно - появится приглашение для ввода команд: "~ #"...</summary>
 
