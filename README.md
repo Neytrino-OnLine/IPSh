@@ -73,7 +73,9 @@ show version
 
 Переходим в "Управление/Диагностика", где нажимаем "Показать журнал". В журнале (одно за другим) будут появляться события (об устанавке различных модулей и компонентов Entware), мы ждём события "Установка системы пакетов Entware - завершена".
 
-▪ Теперь нам понадобится [PuTTY](http://www.putty.org/), cкачиваем, устанавливаем и запускаем его...
+<details><summary>Теперь нам понадобится ПК и PuTTY</summary>
+ 
+▪ [Скачиваем](http://www.putty.org/), устанавливаем и запускаем PuTTY...
 
 <details><summary>В поле "Host Name (or IP adress)" - вводим IP-адрес вашего маршрутизатора, обычно это:</summary>
 
@@ -117,6 +119,65 @@ keenetic
 <details><summary>Если всё правильно - появится приглашение для ввода команд: "~ #"...</summary>
 
 ![Screenshot](screenshots/p-4.png)</details>
+</details>
+<details><summary>Если ПК под рукой нет (но есть смартфон)...</summary>
+▪ Устанавливаем ConnectBot [GooglePlay](https://play.google.com/store/apps/details?id=org.connectbot)/[RuStore](https://www.rustore.ru/catalog/app/org.connectbot) и открываем его...
+
+<details><summary>Нажимаем кнопку "+" (в нижней части экрана)...</summary>
+
+![Screenshot](screenshots/b-1.png)</details>
+
+<details><summary>Нажимаем на направленную вниз галку (справа от поля)</summary>
+
+![Screenshot](screenshots/b-2.png)</details>
+
+<details><summary>Заполняем поля "Имя пользователя", "Сервер" и "Порт" - следующими данными:</summary>
+
+![Screenshot](screenshots/b-3.png)</details>
+
+Имя пользователя:
+
+```
+root
+```
+
+Сервер:
+```
+192.168.1.1
+```
+
+Порт:
+
+```
+22
+```
+
+> (или вводим "222", если до установки Entware в прошивке уже был установлен компонент "Сервер SSH")
+
+И нажимаем кнопку "Назад"...
+
+<details><summary>Возвращаемся к списку серверов и выбираем (добавленный) сервер...</summary>
+
+![Screenshot](screenshots/b-4.png)</details>
+
+<details><summary>Соглашаемся продолжить попытки соединений...</summary>
+
+![Screenshot](screenshots/b-5.png)</details>
+
+<details><summary>Вводим пароль:</summary>
+
+![Screenshot](screenshots/b-6.png)</details>
+
+```
+keenetic
+```
+
+И нажимаем ввод...
+
+<details><summary>Если всё правильно - появится приглашение для ввода команд: "~ #"...</summary>
+
+![Screenshot](screenshots/b-7.png)</details>
+</details>
 </details>
 
 <details><summary>Чтобы всё правильно работало (компоненты и настройки)</summary>
