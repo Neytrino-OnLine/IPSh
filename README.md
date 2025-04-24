@@ -3,12 +3,16 @@
 
 ## Установка.
 <details><summary>Для тех, кто начинает с самого начала (установка Entware)</summary>
-▪ Нам понадобится маршрутизатор Keenetic (или ZyXel Keenetic) с USB-портом(ами) поддерживающий работу с накопителями.
+┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
+
+ ▪ Нам понадобится маршрутизатор Keenetic (или ZyXel Keenetic) с USB-портом(ами) поддерживающий работу с накопителями.
 
 > К таковым не относятся устройства: 4G II, 4G III, а также - бюджетные модели 2024-го года (уточняйте поддержку соответствующих функций на сайте производителя).
 
-<details><summary>Если у вас ZyXel Keenetic (с KeeneticOS версии 2.x)...</summary>
-▪ Открываем (в веб-конфигураторе) интерфейс командной строки, обычно это:
+<details><summary>Если у вас ZyXel Keenetic (с KeeneticOS версии 2.x)</summary>
+┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
+ 
+ ▪ Открываем (в веб-конфигураторе) интерфейс командной строки, обычно это:
  
 ```
 http://192.168.1.1/a
@@ -25,6 +29,7 @@ components sync legacy
 ```
 components list legacy
 ```
+
 > (для KeeneticOS версии 2.06 и выше)
 
 ▪ Нажимаем кнопку "Отправить запрос".
@@ -136,6 +141,7 @@ show version
 ![Screenshot](screenshots/k-12.png)</details>
 
 <details><summary>Теперь нам понадобится ПК и PuTTY</summary>
+┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
  
 ▪ [Скачиваем](http://www.putty.org/), устанавливаем и запускаем PuTTY...
 
@@ -193,13 +199,16 @@ keenetic
 ``
 ~ #
 ``
+
 <details><summary>(показать скриншот)</summary>
 
 ![Screenshot](screenshots/p-4.png)</details>
 </details>
 
-<details><summary>Если ПК под рукой нет (но есть смартфон)...</summary>
-▪ Устанавливаем ConnectBot из [GooglePlay](https://play.google.com/store/apps/details?id=org.connectbot) или [RuStore](https://www.rustore.ru/catalog/app/org.connectbot) и открываем его...
+<details><summary>Если ПК под рукой нет (но есть смартфон)</summary>
+ ┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
+
+ ▪ Устанавливаем ConnectBot из [GooglePlay](https://play.google.com/store/apps/details?id=org.connectbot) или [RuStore](https://www.rustore.ru/catalog/app/org.connectbot) и открываем его...
 
 ▪ Нажимаем кнопку "+" (в нижней части экрана)...
 
@@ -277,7 +286,9 @@ keenetic
 </details>
 
 <details><summary>Чтобы всё правильно работало (необходимые компоненты)</summary>
-Понадобится следующий компонент:
+┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
+
+ Понадобится следующий компонент:
 
 ```
 Клиент SSTP VPN
