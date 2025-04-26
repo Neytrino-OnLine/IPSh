@@ -142,14 +142,14 @@ function showText	#1 - текст	#2 - цвет
 	echo -e "$2$OUTPUT_TEXT\033[39m\033[49m"
 	}
 
-function copyRight	#1 - год
+function copyRight	#1 - название	#2 - год
 	{
-	if [ "`date +"%C%y"`" -gt "$1" ];then
+	if [ "`date +"%C%y"`" -gt "$2" ];then
 		local YEAR="-`date +"%C%y"`"
 	fi
-	local COPYRIGHT="© $1$YEAR rino Software Lab."
-	local SIZE=`expr $COLUNS - ${#VERSION} - ${#COPYRIGHT} - 7`
-	read -t 1 -n 1 -r -p " IPSh $VERSION`awk -v i=$SIZE 'BEGIN { OFS=" "; $i=" "; print }'`$COPYRIGHT" keypress
+	local COPYRIGHT="© $2$YEAR rino Software Lab."
+	local SIZE=`expr $COLUNS - ${#1} - ${#VERSION} - ${#COPYRIGHT} - 3`
+	read -t 1 -n 1 -r -p " $1 $VERSION`awk -v i=$SIZE 'BEGIN { OFS=" "; $i=" "; print }'`$COPYRIGHT" keypress
 	}
 
 function showMessage	#1 - текст	#2 - не выводить в журнал	#3 - не выводить в NDMS	#4 - не выводить в терминал
