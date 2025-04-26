@@ -1641,7 +1641,7 @@ function ipshRemove
 			fi
 		fi
 		headLine
-		copyRight "2025"
+		copyRight "IPSh" "2025"
 		rm -rf /opt/bin/ipsh
 		clear
 		exit
@@ -1665,7 +1665,7 @@ function configReset
 			echo ""
 			read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 			headLine
-			copyRight "2025"
+			copyRight "IPSh" "2025"
 			clear
 			exit
 		fi
@@ -1945,7 +1945,7 @@ function mainMenu
 		local STATE=""
 	fi
 	headLine "IPSpeed.info helper"
-	echo "Доступные функции: $LOG $STATE"
+	echo "Главное меню:"
 	echo ""
 	echo -e "\t1: Начать новый цикл"
 	echo -e "\t2: Найти новый сервер"
@@ -2003,7 +2003,7 @@ function mainMenu
 		exit
 	else
 		headLine
-		copyRight "2025"
+		copyRight "IPSh" "2025"
 		clear
 		exit
 	fi
