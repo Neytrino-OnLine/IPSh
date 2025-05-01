@@ -2087,18 +2087,30 @@ case "$1" in
 	exit
 	;;
 
--u)	headLine "Обновление IPSh"
-	echo "`opkg update`" > /dev/null
-	echo "`opkg install ca-certificates wget-ssl`" > /dev/null
-	echo "`opkg remove wget-nossl`" > /dev/null
-	wget -q -O /tmp/ipsh.sh https://raw.githubusercontent.com/Neytrino-OnLine/ipsh/refs/heads/main/ipsh.sh
-	if [ ! -n "`cat "/tmp/ipsh.sh" | grep 'function interfaceID'`" ];then
-		messageBox "Не удалось загрузить файл." "\033[91m"
+-u)	SCRIPT_NAME="IPSh"
+	headLine "Обновление $SCRIPT_NAME"
+	FILE_NAME="`echo "$SCRIPT_NAME" | tr '[:upper:]' '[:lower:]'`"
+	if [ -f "/opt/_install/$FILE_NAME.sh" ];then
+		echo "Локальное обновление..."
+		echo ""
+		mv /opt/_install/$FILE_NAME.sh /opt/bin/$FILE_NAME
+		rm -rf /opt/_install/
 	else
-		mv /tmp/ipsh.sh /opt/bin/ipsh
-		chmod +x /opt/bin/ipsh
-		messageBox "Сейчас, версия IPSh: `cat "/opt/bin/ipsh" | grep '^VERSION="' | awk -F"=" '{print $2}' | awk '{gsub(/"/,"")}1'`"
+		echo "Обновление..."
+		echo ""
+		echo "`opkg update`" > /dev/null
+		echo "`opkg install ca-certificates wget-ssl`" > /dev/null
+		echo "`opkg remove wget-nossl`" > /dev/null
+		wget -q -O /tmp/$FILE_NAME.sh https://raw.githubusercontent.com/Neytrino-OnLine/ipsh/refs/heads/main/ipsh.sh
+		if [ ! -n "`cat "/tmp/$FILE_NAME.sh" | grep 'function copyRight'`" ];then
+			messageBox "Не удалось загрузить файл." "\033[91m"
+			exit
+		else
+			mv /tmp/$FILE_NAME.sh /opt/bin/$FILE_NAME
+		fi
 	fi
+	chmod +x /opt/bin/$FILE_NAME
+	messageBox "Сейчас, версия $SCRIPT_NAME: `cat "/opt/bin/$FILE_NAME" | grep '^VERSION="' | awk -F"=" '{print $2}' | awk '{gsub(/"/,"")}1'`"
 	exit
 	;;
 
