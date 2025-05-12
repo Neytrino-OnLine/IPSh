@@ -120,26 +120,23 @@ function messageBox	#1 - текст	#2 - цвет
 
 function showText	#1 - текст	#2 - цвет
 	{
-	local INPUT_TEXT=`echo "$1" | awk '{gsub(/\\\t/,"____")}1'`
-	local INPUT_TEXT=`echo -e "$INPUT_TEXT"`
+	local TEXT=`echo "$1" | awk '{gsub(/\\\t/,"____")}1'`
+	local TEXT=`echo -e "$TEXT"`
 	local STRING=""
-	local OUTPUT_TEXT=""
 	local SPACE=""
 	IFS=$' '
-	for WORD in $INPUT_TEXT;do
+	for WORD in $TEXT;do
 			local WORD_LONG=`echo ${#WORD}`
 			local STRING_LONG=`echo ${#STRING}`
 			if [ "`expr $WORD_LONG + $STRING_LONG + 1`" -gt "$COLUNS" ];then
-				local OUTPUT_TEXT=$OUTPUT_TEXT$STRING"\n"
+				echo -e "$2$STRING\033[39m\033[49m" | awk '{gsub(/____/,"    ")}1'
 				local STRING=$WORD
 			else
 				local STRING=$STRING$SPACE$WORD
 				local SPACE=" "
 			fi
 	done
-	local OUTPUT_TEXT=$OUTPUT_TEXT$STRING
-	local OUTPUT_TEXT="`echo $OUTPUT_TEXT | awk '{gsub(/____/,"    ")}1'`"
-	echo -e "$2$OUTPUT_TEXT\033[39m\033[49m"
+	echo -e "$2$STRING\033[39m\033[49m" | awk '{gsub(/____/,"    ")}1'
 	}
 
 function copyRight	#1 - название	#2 - год
@@ -757,7 +754,7 @@ function policyCreate
 		echo "`ndmc -c ip policy $POLICY`" > /dev/null
 		echo ""
 		echo "Изменение имени политики доступа..."
-		echo "`ndmc -c ip policy $POLICY description $INTERFACE_NAME`" > /dev/null
+		echo "`ndmc -c ip policy $POLICY description $POLICY_NAME`" > /dev/null
 		echo ""
 	else
 		local POLICY="`echo "$SHOW_IP_POLICY" | grep "description = $POLICY_NAME" | awk -F" = " '{print $2}' | awk -F", " '{print $1}'`"
@@ -835,22 +832,17 @@ function portSet
 
 function segListGet
 	{
-	local ID_LIST=`ip addr show | awk -F" |/" '{gsub(/^ +/,"")}/inet /{print $(NF)"\t"$2}'`
-	local NAME_LIST=`ndmc -c show interface | grep "address: \|description: "`
-	SEG_LIST=""
-	local NEW=""
+	local IP_ADDR_SHOW=`ip addr show | awk -F" |/" '{gsub(/^ +/,"")}/inet /{print $(NF)"\t"$2}' | grep -v "^lo\|^ezcfg"`
+	local SHOW_INTERFACE=`ndmc -c show interface | grep "address: \|description: "`
 	IFS=$'\n'
-	for LINE in $ID_LIST;do
+	for LINE in $IP_ADDR_SHOW;do
 		local IP="`echo "$LINE" | awk -F"\t" '{print $2}'`"
-		local DESCRIPTION="`echo "$NAME_LIST" | grep -i -B 1 -A 0 "$IP" | head -n1 | awk -F": " '{print $2}'`"
+		local DESCRIPTION="`echo "$SHOW_INTERFACE" | grep -i -B 1 -A 0 "$IP" | head -n1 | awk -F": " '{print $2}'`"
 		if [ -n "$DESCRIPTION" ];then
-			SEG_LIST="$SEG_LIST$NEW\t• $IP ($DESCRIPTION)"
-		else
-			SEG_LIST="$SEG_LIST$NEW\t• $IP (`echo "$LINE" | awk -F"\t" '{print $1}'`)"
+			IP_ADDR_SHOW="`echo "$IP_ADDR_SHOW" | sed -e "s/$IP/$IP ($DESCRIPTION)/g"`"
 		fi
-		local NEW='\n'
 	done
-	SEG_LIST="`echo -e "$SEG_LIST"`"
+	SEG_LIST="`echo "$IP_ADDR_SHOW" | awk -F"\t" '{print "\t• "$2}'`"
 	}
 
 function ipSet
@@ -1880,20 +1872,16 @@ function extraMenu
 		local STATE3=""
 	fi
 	headLine "Дополнительно"
-	echo -e "\t1: Удалить IPSh"
-	showOption "\t2: Сброс настроек" "$STATE1"
-	showOption "\t3: Просмотр конфигурации" "$STATE1"
-	showOption "\t4: Просмотр таблицы" "$STATE2"
-	showOption "\t5: просмотр списка" "$STATE3"
+	showOption "\t1: Сброс настроек" "$STATE1"
+	showOption "\t2: Просмотр конфигурации" "$STATE1"
+	showOption "\t3: Просмотр таблицы" "$STATE2"
+	showOption "\t4: Просмотр списка" "$STATE3"
+	echo -e "\t9: Удалить IPSh"
 	echo -e "\t0: В главное меню (по умолчанию)"
 	echo ""
 	read -r -p "Ваш выбор:"
 	echo ""
 	if [ "$REPLY" = "1" ];then
-		ipshRemove
-		extraMenu
-		exit
-	elif [ "$REPLY" = "2" ];then
 		if [ -z "$STATE1" ];then
 			configReset
 		else
@@ -1901,7 +1889,7 @@ function extraMenu
 		fi
 		extraMenu
 		exit
-	elif [ "$REPLY" = "3" ];then
+	elif [ "$REPLY" = "2" ];then
 		if [ -z "$STATE1" ];then
 			configShow
 		else
@@ -1911,7 +1899,7 @@ function extraMenu
 		read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 		extraMenu
 		exit
-	elif [ "$REPLY" = "4" ];then
+	elif [ "$REPLY" = "3" ];then
 		if [ -z "$STATE2" ];then
 			tableShow
 		else
@@ -1921,7 +1909,7 @@ function extraMenu
 		read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 		extraMenu
 		exit
-	elif [ "$REPLY" = "5" ];then
+	elif [ "$REPLY" = "4" ];then
 		if [ -z "$STATE3" ];then
 			listShow
 		else
@@ -1929,6 +1917,10 @@ function extraMenu
 		fi
 		echo ""
 		read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
+		extraMenu
+		exit
+	elif [ "$REPLY" = "9" ];then
+		ipshRemove
 		extraMenu
 		exit
 	else
