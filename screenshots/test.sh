@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="beta 1"
+VERSION="beta 2"
 CRON_FILE='/opt/var/spool/cron/crontabs/root'
 COLUNS="`stty -a | awk -F"; " '{print $3}' | grep "columns" | awk -F" " '{print $2}'`"
 
@@ -129,9 +129,8 @@ function scheduleDelete
 	echo "`crond`" > /dev/null
 	}
 
-function mainMenu
+function scriptSetup
 	{
-	headLine "USB-Storage Reconnect"
 	LIST=`ls /tmp/mnt`
 	if [ -z "$LIST" ];then
 		messageBox "USB-накопители - отсутствуют." "\033[91m"
@@ -195,30 +194,69 @@ function mainMenu
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 	echo ""
-	echo -e "#!/bin/sh\n\nif [ ! -f \"$TARGET\" -a ! -d \"$TARGET\" ];then\n\tndmc -c no system mount $STORAGE:\n\tsleep 15\n\tndmc -c system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c no system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c system mount $STORAGE:\nfi" > /opt/bin/usr-script
+	echo -e "#!/bin/sh\n\nif [ ! -f \"$TARGET\" -a ! -d \"$TARGET\" ];then\n\tndmc -c no system mount $STORAGE:\n\tsleep 15\n\tndmc -c system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c no system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c system mount $STORAGE:\n\tlogger \"Usr: выполнено переподключение накопителя.\"\nelse\n\tlogger \"Usr: накопитель - доступен.\"\nfi" > /opt/bin/usr-script
 	chmod +x /opt/bin/usr-script
 	scheduleAdd
+	showText "\tТеперь, каждые 10 минут, скрипт будет проверять доступность файла/папки \"$TARGET\", и в случае отсутствия доступа - выполнит переподключение накопителя: USB $PORT."
+	showText "\tОтслеживать работу скрипта - можно в журнале интернет-центра, по событиям с префиксом \"USr:\"..."
+	echo ""
+	}
+
+function scriptDelete
+	{
+	echo "Удаление USB-Storage Reconnect..."
+	scheduleDelete
+	messageBox "Скрипт - удалён."
+	rm -rf /opt/bin/usr-setup
+	}
+
+function mainMenu
+	{
+	headLine "USB-Storage Reconnect"
+	if [ -f "/opt/bin/usr-script" ];then
+			showText "\tОбнаружен настроенный скрипт."
+			echo ""
+			echo -e "\t1: Новая конфигурация"
+			echo -e "\t2: Удалить скрипт"
+			echo -e "\t0: Отмена (по умолчанию)"
+			echo ""
+			read -r -p "Ваш выбор:"
+			echo ""
+			if [ "$REPLY" = "1" ];then
+				scriptSetup
+			elif [ "$REPLY" = "2" ];then
+				scriptDelete
+			fi
+	else
+		scriptSetup
+	fi
 	headLine
 	copyRight "USr" "2025"
 	clear
+	rm -rf /opt/bin/usr-script
+	exit
 	}
 
 echo;while [ -n "$1" ];do
 case "$1" in
 
--d)	headLine "Удаление"
-	echo "Удаление USB-Storage Reconnect..."
-	scheduleDelete
-	messageBox "Скрипт - удалён."
-	rm -rf /opt/bin/usr-setup
+-d)	headLine "USB-Storage Reconnect"
+	scriptDelete
 	exit
 	;;
 
-*) echo "Ошибка: введён некорректный ключ.
+-s)	headLine "USB-Storage Reconnect"
+	scriptSetup
+	exit
+	;;
+
+*) headLine "USB-Storage Reconnect"
+	messageBox "Ошибка: введён некорректный ключ.
 
 Доступные ключи:
 
-	-d: Удаление скрипта"
+	-d: Удаление скрипта
+	-d: Настройка скрипта"
 	exit
 	;;
 	
