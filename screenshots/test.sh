@@ -174,7 +174,7 @@ function scriptSetup
 		exit
 	fi
 	LIST=`ndmc -c show usb`
-	PORTS=`echo "$LIST" | grep 'manufacturer: \|product: \|port: ' | sed -e "s/manufacturer: /manufacturer: @@/g" | awk -F": " '{print $2}' | tr '\n' '\t' | sed -e "s/@@/\\n/g" | grep -v '^$' | awk -F"\t" '{print NR":\t"$3"\t("$1, $2")"}'`
+	PORTS=`echo "$LIST" | grep 'manufacturer: \|product: \|port: ' | sed -e "s/manufacturer: /manufacturer: @@/g" | awk -F": " '{print $2}' | tr '\n' '\t' | sed -e "s/@@/\\n/g" | grep -v '^$' | awk -F"\t" '{print NR":\t"$2"\t("$1, $3")"}'`
 echo "$PORTS"
 	echo "Выберите USB=порт:"
 	echo ""
