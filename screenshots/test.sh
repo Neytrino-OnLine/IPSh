@@ -173,8 +173,15 @@ function scriptSetup
 		messageBox "Файл или папка - не выбран." "\033[91m"
 		exit
 	fi
-	LIST=`ndmc -c show usb`
-	PORTS=`echo "$LIST" | grep 'manufacturer: \|product: \|port: ' | sed -e "s/manufacturer: /manufacturer: @@/g" | awk -F": " '{print $2}' | tr '\n' '\t' | sed -e "s/@@/\\n/g" | grep -v '^$' | awk -F"\t" '{print NR":\t"$2"\t("$1, $3")"}'`
+	LIST=`ndmc -c show usb | grep 'device: \|manufacturer: \|product: \|port: ' | sed -e "s/device: /device: @@/g; s/manufacturer: /manufacturer:  m=/g; s/product: /product: p=/g; s/port: /port: u=/g" | awk -F": " '{print $2}' | tr '\n' '\t' | sed -e "s/@@/\\n/g" | grep -v '^$'`
+	PORTS=""
+	IFS=$'\n'
+	for LINE in $LIST;do
+		SORT=`echo "$LINE" | tr '\t' '\n' | sort | tr '\n' '\t'`
+		PORTS="$PORTS\n$SORT"
+	done
+	PORTS=`echo -e "$PORTS"`
+	#PORTS=`echo "$LIST" | grep 'device: \|manufacturer: \|product: \|port: ' | sed -e "s/device: /device: d\t@@/g; s/manufacturer: /manufacturer:  m\t/g; s/product: /product: p\t/g; s/port: /port: u\t/g" | awk -F": " '{print $2}' | tr '\n' '\t' | sed -e "s/@@/\\n/g" | grep -v '^$' | awk -F"\t" '{print NR":\t"$1"\t("$3, $2")"}'`
 echo "$PORTS"
 	echo "Выберите USB=порт:"
 	echo ""
