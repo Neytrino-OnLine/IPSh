@@ -180,20 +180,18 @@ function scriptSetup
 		SORT=`echo "$LINE" | tr '\t' '\n' | sort | awk -F"=" '{print $2}' | tr '\n' '\t'`
 		PORTS="$PORTS\n$SORT"
 	done
-	PORTS=`echo -e "$PORTS" | grep -v '^$'`
-	#PORTS=`echo "$LIST" | grep 'device: \|manufacturer: \|product: \|port: ' | sed -e "s/device: /device: d\t@@/g; s/manufacturer: /manufacturer:  m\t/g; s/product: /product: p\t/g; s/port: /port: u\t/g" | awk -F": " '{print $2}' | tr '\n' '\t' | sed -e "s/@@/\\n/g" | grep -v '^$' | awk -F"\t" '{print NR":\t"$1"\t("$3, $2")"}'`
-echo "$PORTS"
+	PORTS=`echo -e "$PORTS" | grep -v '^$' | sed -e "s/^\\t//g" | awk '{print NR":"$0}'`
 	echo "Выберите USB=порт:"
 	echo ""
 	showText "\tВыбранный порт будет отключён, при отсутствии доступа к накопителю..."
 	echo ""
-	echo "$PORTS" | awk -F"\t" '{print "\t"$1" USB "$2, $3}'
+	echo "$PORTS" | awk -F"\t" '{print "\t"$1" USB "$4" ("$2, $3")"}'
 	echo ""
 	read -r -p "Ваш выбор:"
 	echo ""
 	REPLY=`echo "$PORTS" | grep "^\$REPLY:"`
 	if [ -n "$REPLY" ];then
-		PORT=`echo "$REPLY" | awk -F"\t" '{print $2}'`
+		PORT=`echo "$REPLY" | awk -F"\t" '{print $4}'`
 	else
 		messageBox "Порт - не выбран." "\033[91m"
 		exit
