@@ -175,6 +175,7 @@ function scriptSetup
 	fi
 	LIST=`ndmc -c show usb`
 	PORTS=`echo "$LIST" | grep 'manufacturer: \|product: \|port: ' | sed -e "s/manufacturer: /manufacturer: @@/g" | awk -F": " '{print $2}' | tr '\n' '\t' | sed -e "s/@@/\\n/g" | grep -v '^$' | awk -F"\t" '{print NR":\t"$3"\t("$1, $2")"}'`
+echo "$PORTS"
 	echo "Выберите USB=порт:"
 	echo ""
 	showText "\tВыбранный порт будет отключён, при отсутствии доступа к накопителю..."
@@ -192,7 +193,6 @@ function scriptSetup
 	fi
 	messageBox "Настройка завершена."
 	echo ""
-	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 	echo ""
 	echo -e "#!/bin/sh\n\nif [ ! -f \"$TARGET\" -a ! -d \"$TARGET\" ];then\n\tndmc -c no system mount $STORAGE:\n\tsleep 15\n\tndmc -c system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c no system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c system mount $STORAGE:\n\tlogger \"Usr: выполнено переподключение накопителя.\"\nelse\n\tlogger \"Usr: накопитель - доступен.\"\nfi" > /opt/bin/usr-script
 	chmod +x /opt/bin/usr-script
@@ -200,6 +200,7 @@ function scriptSetup
 	showText "\tТеперь, каждые 10 минут, скрипт будет проверять доступность файла/папки \"$TARGET\", и в случае отсутствия доступа - выполнит переподключение накопителя: USB $PORT."
 	showText "\tОтслеживать работу скрипта - можно в журнале интернет-центра, по событиям с префиксом \"USr:\"..."
 	echo ""
+	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 	}
 
 function scriptDelete
