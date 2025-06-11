@@ -177,10 +177,10 @@ function scriptSetup
 	PORTS=""
 	IFS=$'\n'
 	for LINE in $LIST;do
-		SORT=`echo "$LINE" | tr '\t' '\n' | sort | tr '\n' '\t'`
+		SORT=`echo "$LINE" | tr '\t' '\n' | sort | awk -F"=" '{print $2}' | tr '\n' '\t'`
 		PORTS="$PORTS\n$SORT"
 	done
-	PORTS=`echo -e "$PORTS"`
+	PORTS=`echo -e "$PORTS" | grep '^$'`
 	#PORTS=`echo "$LIST" | grep 'device: \|manufacturer: \|product: \|port: ' | sed -e "s/device: /device: d\t@@/g; s/manufacturer: /manufacturer:  m\t/g; s/product: /product: p\t/g; s/port: /port: u\t/g" | awk -F": " '{print $2}' | tr '\n' '\t' | sed -e "s/@@/\\n/g" | grep -v '^$' | awk -F"\t" '{print NR":\t"$1"\t("$3, $2")"}'`
 echo "$PORTS"
 	echo "Выберите USB=порт:"
