@@ -198,7 +198,6 @@ function scriptSetup
 	fi
 	messageBox "Настройка завершена."
 	echo ""
-	echo ""
 	echo -e "#!/bin/sh\n\nif [ ! -f \"$TARGET\" -a ! -d \"$TARGET\" ];then\n\tndmc -c no system mount $STORAGE:\n\tsleep 15\n\tndmc -c system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c no system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c system mount $STORAGE:\n\tlogger \"Usr: выполнено переподключение накопителя.\"\nelse\n\tlogger \"Usr: накопитель - доступен.\"\nfi" > /opt/bin/usr-script
 	chmod +x /opt/bin/usr-script
 	scheduleAdd
@@ -239,7 +238,7 @@ function mainMenu
 	headLine
 	copyRight "USr" "2025"
 	clear
-	rm -rf /opt/bin/usr-script
+	rm -rf /opt/bin/usr-setup
 	exit
 	}
 
