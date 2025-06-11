@@ -180,7 +180,7 @@ function scriptSetup
 		SORT=`echo "$LINE" | tr '\t' '\n' | sort | awk -F"=" '{print $2}' | tr '\n' '\t'`
 		PORTS="$PORTS\n$SORT"
 	done
-	PORTS=`echo -e "$PORTS" | grep -v '^$' | sed -e "s/^\\t//g" | awk '{print NR":"$0}'`
+	PORTS=`echo -e "$PORTS" | sort | grep -v '^$' | sed -e "s/^\\t//g" | awk '{print NR":"$0}'`
 	echo "Выберите USB=порт:"
 	echo ""
 	showText "\tВыбранный порт будет отключён, при отсутствии доступа к накопителю..."
@@ -198,7 +198,7 @@ function scriptSetup
 	fi
 	messageBox "Настройка завершена."
 	echo ""
-	echo -e "#!/bin/sh\n\nif [ ! -f \"$TARGET\" -a ! -d \"$TARGET\" ];then\n\tndmc -c no system mount $STORAGE:\n\tsleep 15\n\tndmc -c system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c no system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c system mount $STORAGE:\n\tlogger \"Usr: выполнено переподключение накопителя.\"\nelse\n\tlogger \"Usr: накопитель - доступен.\"\nfi" > /opt/bin/usr-script
+	echo -e "#!/bin/sh\n\nif [ ! -f \"$TARGET\" -a ! -d \"$TARGET\" ];then\n\tndmc -c no system mount $STORAGE:\n\tsleep 15\n\tndmc -c system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c no system usb $PORT power shutdown\n\tsleep 15\n\tndmc -c system mount $STORAGE:\n\tlogger \"USr: выполнено переподключение накопителя.\"\nelse\n\tlogger \"USr: накопитель - доступен.\"\nfi" > /opt/bin/usr-script
 	chmod +x /opt/bin/usr-script
 	scheduleAdd
 	showText "\tТеперь, каждые 10 минут, скрипт будет проверять доступность файла/папки \"$TARGET\", и в случае отсутствия доступа - выполнит переподключение накопителя: USB $PORT."
