@@ -1,8 +1,9 @@
 #!/bin/sh
 
-VERSION="beta 1.1"
+VERSION="beta 2"
 PROFILE_PATH="/opt/etc/ipsh/ipsh.conf"
 TABLE_FILE='/tmp/ipspeed.tbl'
+TABLE_TEMP='/tmp/ipspeed.tmp'
 LIST_FILE='/tmp/ipspeed.lst'
 LOG_FILE='/tmp/ipspeed.log'
 FLAG_FILE='/tmp/ipspeed.flg'
@@ -215,6 +216,19 @@ function opkgElinks
 	fi
 	}
 
+function loader	#1 - вторая попытка
+	{
+	if [ -f "$LOADER" ];then
+		`$LOADER`
+	else
+		wget -q -O $LOADER https://raw.githubusercontent.com/Neytrino-OnLine/IPSh/refs/heads/main/loader.sh
+		chmod +x $LOADER
+		if [ -z "$1" ];then
+			loader "break"
+		fi
+	fi
+	}
+
 function newList
 	{
 	if [ -z "$ELINKS" ];then
@@ -222,14 +236,17 @@ function newList
 	fi
 	local TEST=`elinks -source https://ipspeed.info/freevpn_sstp.php | grep -c "vpn"`
 	if [ "$TEST" -gt "0" ];then
-		local TABLE=`elinks -source https://ipspeed.info/freevpn_sstp.php?language=en | awk '{gsub(/<\/p>/,"\t"); gsub(/ ms/," ms\n")}1' | tr '. ' '@'  | sed  's/<[^>]*>//g'  | grep "@@" | grep -v "^@@\|^Username" | awk -F"@@" '{print $2}' | tr '@' '.'`
-		#elinks -source https://ipspeed.info/freevpn_sstp.php?language=en | awk '{gsub(/<\/div>/,"\t")}1' | awk '{gsub(/ ms/," ms\n")}1' | sed  's/<[^>]*>//g' | awk '{gsub(/^\t\t\t/,"@")}1' | awk '{gsub(/^\t\t/,"@")}1'  | awk '{gsub(/^LOCATION\tHOSTNAME\tUPTIME\tPING\t\t\t/,"")}1' | grep "^@." | grep -v "\"" | awk '{gsub(/^@/,"")}1' | grep -v "Russian Federation\|Ukraine" | grep " ms" | awk '{gsub(/ ms/,"")}1'  | awk '{gsub(/^\t/,"")}1'
-		local TEST=`echo "$TABLE" | grep -c $`
-		if [ "$TEST" -gt "0" ];then
-			echo "$TABLE" > $TABLE_FILE
-			showMessage "Таблица успешно загружена."
+		local LOADER=`dirname $PROFILE_PATH`/loader.sh
+		loader
+		if [ -f "$LOADER" -a -f "$TABLE_TEMP" ];then
+			if [ "`cat "$TABLE_TEMP" | grep -c $`" -gt "0" ];then
+				mv $TABLE_TEMP $TABLE_FILE
+				showMessage "Таблица успешно загружена."
+			else
+				showMessage "В таблице отсутствуют записи..."
+			fi
 		else
-			showMessage "В таблице отсутствуют записи..."
+			showMessage "Проблемы с загрузкой таблицы..."
 		fi
 		echo ""
 		if [ -f "$TABLE_FILE" ];then
@@ -568,7 +585,7 @@ function proxyChange
 	if [ -f "$PROFILE_PATH" ];then
 		if [ -n "`opkg list-installed | grep "^3proxy"`" -a -n "`cat $PROFILE_PATH | grep "PROXY_"`" ];then
 			interfaceID
-			local PROXY_EXTERNAL="`ndmc -c "show interface $INTERFACE" | grep "address" | awk -F": " '{print $2}'`"
+			local PROXY_EXTERNAL="`ndmc -c "show interface $INTERFACE" | grep " address" | awk -F": " '{print $2}'`"
 			local PROXY_INTERNAL="`cat $PROFILE_PATH | grep "^PROXY_INTERNAL" | awk -F"=" '{print $2}'`"
 			local PROXY_PORT="`cat $PROFILE_PATH | grep "^PROXY_PORT=" | awk -F"=" '{print $2}'`"
 			if [ -z "$PROXY_INTERNAL" ];then
