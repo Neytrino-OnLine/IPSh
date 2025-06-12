@@ -220,7 +220,8 @@ function loader	#1 - вторая попытка
 	{
 	if [ -f "$LOADER" ];then
 		`$LOADER`
-	else
+	fi
+	if [ ! -f "$LOADER" -o ! -f "$TABLE_TEMP" ];then
 		wget -q -O $LOADER https://raw.githubusercontent.com/Neytrino-OnLine/IPSh/refs/heads/main/loader.sh
 		chmod +x $LOADER
 		if [ -z "$1" ];then
