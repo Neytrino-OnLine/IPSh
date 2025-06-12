@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION="1.0"
-TABLE_FILE='/tmp/ipspeed.tmp'
+TABLE_TEMP='/tmp/ipspeed.tmp'
 
 function tableLoader	#1 - тестовый режим
 	{
@@ -17,7 +17,7 @@ function tableLoader	#1 - тестовый режим
 	TABLE=`echo -e "$TABLE" | grep -v '^$\|Russian Federation\|Ukraine'`
 	if [ -z "$1" ];then
 		if [ "`echo "$TABLE" | grep -c $`" -gt "1" ];then
-			echo "$TABLE" > $TABLE_FILE
+			echo "$TABLE" > $TABLE_TEMP
 		fi
 	else
 		local COUNTER=24
