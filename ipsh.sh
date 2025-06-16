@@ -218,12 +218,16 @@ function opkgElinks
 
 function loader	#1 - вторая попытка
 	{
+	local LOADER_FOLDER="`dirname "$LOADER"`"
+	if [ ! -d "$LOADER_FOLDER" ];then
+		mkdir -p "$LOADER_FOLDER"
+	fi
 	if [ -f "$LOADER" ];then
-		`$LOADER`
+		echo "`$LOADER`" > /dev/null
 	fi
 	if [ ! -f "$LOADER" -o ! -f "$TABLE_TEMP" ];then
 		wget -q -O $LOADER https://raw.githubusercontent.com/Neytrino-OnLine/IPSh/refs/heads/main/loader.sh
-		chmod +x $LOADER
+		echo "`chmod +x $LOADER`" > /dev/null
 		if [ -z "$1" ];then
 			loader "break"
 		fi
@@ -668,12 +672,12 @@ function ndmScriptDelete	#1 - не выводить в терминал
 
 function systemNameDetect
 	{
-	showMessage "Определение \"sustem_name\" SSTP-интерфейса:"
+	showMessage "Определение \"system_name\" SSTP-интерфейса:"
 	echo ""
 	interfaceID
-	if [ "$NDMS_VERSION" = "4.3+" ];then
-		SYSTEM_NAME="`ndmc -c "show interface system-name $ID"`"
-	else
+	#if [ "$NDMS_VERSION" = "4.3+" ];then
+		#SYSTEM_NAME="`ndmc -c "show interface system-name $ID"`"
+	#else
 		echo -e "#!/bin/sh\n\nif [ \"\$id\" = \"$INTERFACE\" ];then\n\techo \"\$system_name\" > /tmp/system_name_detect.tmp\nfi\nexit" > /opt/etc/ndm/ifstatechanged.d/system_name_detect.sh
 		if [ -n "`isDisabled "" "skip exit"`" ];then
 			flagUp "определение system_name, при выключенном SSTP-подключении" "no console"
@@ -696,7 +700,7 @@ function systemNameDetect
 		profileSave "SYSTEM_NAME=$SYSTEM_NAME"
 		rm -rf /tmp/system_name_detect.tmp
 		rm -rf /opt/etc/ndm/ifstatechanged.d/system_name_detect.sh
-	fi
+	#fi
 	}
 
 function connectionCreate	#1 - пропустить диалог
@@ -2034,7 +2038,7 @@ function firstStart	# текст
 		interfaceID "force"
 		connectionNew
 		if [ -n "`isConnected`" ];then
-			messageBpx "Подключение - установлено."
+			messageBox "Подключение - установлено."
 			echo ""
 			
 		else
