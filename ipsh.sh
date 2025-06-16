@@ -175,7 +175,7 @@ function showOption	#1 - текст	#2 - флаг блокировки
 	echo -e "$COLOR$1\033[39m"
 	}
 
-function interfaceID	#1 - форсировать создание подключения
+function interfaceID	#1 - форсировать создание подключения	#2 - остановиться после выполнения
 	{
 	if [ "$NDMS_VERSION" = "2.x" ];then
 		local ID="`ndmc -c "show interface" | grep -i -B 3 -A 0 "$INTERFACE_NAME" | grep "id: " | awk -F": " '{print $2}'`"
@@ -188,9 +188,13 @@ function interfaceID	#1 - форсировать создание подключ
 	else
 		showMessage "Не удалось определить идентификатор SSTP-подключения"
 		echo ""
-		ndmScriptDelete
-		pingScheduleDelete
-		connectionCreate "$1"
+		if [ -n "$2" ];then
+			interfaceID "$1" "break"
+		else
+			ndmScriptDelete
+			pingScheduleDelete
+			connectionCreate "$1"
+		fi
 	fi
 	}
 
