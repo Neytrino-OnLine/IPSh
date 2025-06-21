@@ -1,6 +1,7 @@
 #!/bin/sh
 
 VERSION="beta 2"
+BUILD="0000.1"
 PROFILE_PATH="/opt/etc/ipsh/ipsh.conf"
 TABLE_FILE='/tmp/ipspeed.tbl'
 TABLE_TEMP='/tmp/ipspeed.tmp'
