@@ -2109,11 +2109,11 @@ case "$1" in
 -u)	SCRIPT_NAME="IPSh"
 	headLine "Обновление $SCRIPT_NAME"
 	FILE_NAME="`echo "$SCRIPT_NAME" | tr '[:upper:]' '[:lower:]'`"
-	if [ -f "/opt/_install/$FILE_NAME.sh" ];then
+	if [ -f "/opt/_update/$FILE_NAME.sh" ];then
 		echo "Локальное обновление..."
 		echo ""
-		mv /opt/_install/$FILE_NAME.sh /opt/bin/$FILE_NAME
-		rm -rf /opt/_install/
+		mv /opt/_update/$FILE_NAME.sh /opt/bin/$FILE_NAME
+		rm -rf /opt/_update/
 	else
 		echo "Обновление..."
 		echo ""
@@ -2129,11 +2129,15 @@ case "$1" in
 		fi
 	fi
 	chmod +x /opt/bin/$FILE_NAME
-	messageBox "Сейчас, версия $SCRIPT_NAME: `cat "/opt/bin/$FILE_NAME" | grep '^VERSION="' | awk -F"=" '{print $2}' | awk '{gsub(/"/,"")}1'`"
+	messageBox "$SCRIPT_NAME обновлён до версии: `cat "/opt/bin/$FILE_NAME" | grep '^VERSION="' | awk -F"=" '{print $2}' | awk '{gsub(/"/,"")}1'` build `cat "/opt/bin/$FILE_NAME" | grep '^BUILD="' | awk -F'"' '{print $2}'`"
 	exit
 	;;
 
--v)	echo " $VERSION"
+-v)	echo "$0 $VERSION build $BUILD"
+	LOADER_PATH="`dirname $PROFILE_PATH`/loader.sh"
+	if [ -f "$LOADER_PATH" ];then
+		echo "$LOADER_PATH `cat $LOADER_PATH | grep "^VERSION=" | awk -F'"' '{print $2}'`"
+	fi
 	exit
 	;;
 
