@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION="beta 2"
-BUILD="0000.1"
+BUILD="0707.1"
 PROFILE_PATH="/opt/etc/ipsh/ipsh.conf"
 TABLE_FILE='/tmp/ipspeed.tbl'
 TABLE_TEMP='/tmp/ipspeed.tmp'
@@ -630,7 +630,7 @@ function proxyCheck
 			else
 				local PROXY_EXTERNAL=""
 			fi
-			if [ ! "`ndmc -c "show interface $INTERFACE" | grep "address" | awk -F": " '{print $2}'`" = "$PROXY_EXTERNAL" ];then
+			if [ ! "`ndmc -c "show interface $INTERFACE" | grep " address" | awk -F": " '{print $2}'`" = "$PROXY_EXTERNAL" ];then
 				showMessage "Необходимо обновление конфигурации прокси-сервера..." "no log" "no ndms"
 				echo ""
 				proxyChange
