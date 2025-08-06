@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION="beta 1"
-BUILD="0806.4"
+BUILD="0806.5"
 CRON_FILE="/opt/var/spool/cron/crontabs/root"
 COLUNS="`stty -a | awk -F"; " '{print $3}' | grep "columns" | awk -F" " '{print $2}'`"
 
@@ -160,14 +160,13 @@ function scriptSetup	#1 - скрыть вариант "выход" из меню
 	REPLY=`echo "$SEGMENTS" | grep "^\$REPLY:"`
 	if [ -n "$REPLY" ];then
 		TEXT=`echo "$REPLY" | awk -F"\t" '{print "\tndmc -c dlna interface "$2}'`
-		echo "$TEXT"
 	else
 		messageBox "Сегмент не выбран." "\033[91m"
 		exit
 	fi
 	#opkgCron
-	echo -e "#!/bin/sh\n\nif [ ! \"\`ndmc -c show dlna | sed 's/^[ ]*//' | grep '^running: ' | awk -F\": \" '{print \$2}'\`\" = \"yes\" ];then\n$TEXT\n\tndmc -c system configuration save\n\tlogger \"DMh: настройки DLNA-сервера - исправлены.\"\nfi" > /opt/etc/ndm/wan/dmh.sh
-	chmod +x /opt/etc/ndm/wan/dmh.sh
+	echo -e "#!/bin/sh\n\nif [ ! \"\`ndmc -c show dlna | sed 's/^[ ]*//' | grep '^running: ' | awk -F\": \" '{print \$2}'\`\" = \"yes\" ];then\n$TEXT\n\tndmc -c system configuration save\n\tlogger \"DMh: настройки DLNA-сервера - исправлены.\"\nfi" > /opt/etc/ndm/wan.d/dmh.sh
+	chmod +x /opt/etc/ndm/wan.d/dmh.sh
 	#echo "`/opt/etc/init.d/S10cron restart`" > /dev/null
 	messageBox "Настройка завершена."
 	echo ""
@@ -179,7 +178,7 @@ function scriptDelete
 	{
 	echo "Удаление DLNA Mesh helper..."
 	echo ""
-	rm -rf /opt/etc/ndm/wan/dmh.sh
+	rm -rf /opt/etc/ndm/wan.d/dmh.sh
 	echo "`/opt/etc/init.d/S10cron restart`" > /dev/null
 	messageBox "Скрипт - удалён."
 	echo ""
@@ -189,7 +188,7 @@ function scriptDelete
 function mainMenu
 	{
 	headLine "DLNA Mesh helper"
-	if [ -f "/opt/etc/ndm/wan/dmh.sh" ];then
+	if [ -f "/opt/etc/ndm/wan.d/dmh.sh" ];then
 			showText "\tОбнаружен настроенный скрипт."
 			echo ""
 			echo -e "\t1: Новая конфигурация"
