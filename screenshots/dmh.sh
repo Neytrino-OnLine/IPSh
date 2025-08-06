@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION="beta 1"
-BUILD="0806.2"
+BUILD="0806.3"
 CRON_FILE="/opt/var/spool/cron/crontabs/root"
 COLUNS="`stty -a | awk -F"; " '{print $3}' | grep "columns" | awk -F" " '{print $2}'`"
 
@@ -112,6 +112,24 @@ function copyRight	#1 - название	#2 - год
 	read -t 1 -n 1 -r -p " $1 $VERSION`awk -v i=$SIZE 'BEGIN { OFS=" "; $i=" "; print }'`$COPYRIGHT" keypress
 	}
 
+function opkgCron
+	{
+	if [ -z "`opkg list-installed | grep "^cron"`" ];then
+		showMessage "Установка cron..."
+		echo "`opkg update`" > /dev/null
+		echo "`opkg install cron`" > /dev/null
+		echo ""
+		if [ -z "`opkg list-installed | grep "^cron"`" ];then
+			messageBox "`showMessage "Не удалось установить: cron"`"
+			echo ""
+			showText "\tВы можете попробовать установить пакет cron вручную, командами:"
+			showText "\t\t# opkg update"
+			showText "\t\t# opkg install cron"
+			exit
+		fi
+	fi
+	}
+
 function scriptSetup	#1 - скрыть вариант "выход" из меню накопителей
 	{
 	LIST=`ndmc -c show interface | sed 's/^[ ]*//' | grep '^id: \|^description: \|^address: ' | grep -B 2 '^address: ' | grep '^id: \|^description: \|^address: ' | grep -A 1 '^id: Bridge' | sed -e "s/^id: /id: @@/g;s/^description: /description: \\t/g" | awk -F": " '{print $2}' | sed ':a;N;$!ba;s/\n//g' | sed -e "s/@@/\\n/g" | grep -v '^$'`
@@ -147,8 +165,10 @@ function scriptSetup	#1 - скрыть вариант "выход" из меню
 		messageBox "Сегмент не выбран." "\033[91m"
 		exit
 	fi
+	opkgCron
 	echo -e "#!/bin/sh\n\nif [ ! \"\`ndmc -c show dlna | sed 's/^[ ]*//' | grep '^running: ' | awk -F\": \" '{print \$2}'\`\" = \"yes\" ];then\n$TEXT\n\tndmc -c system configuration save\n\tlogger \"DMh: настройки DLNA-сервера - исправлены.\"\nfi" > /opt/etc/cron.1min/dmh.sh
 	chmod +x /opt/etc/cron.1min/dmh.sh
+	echo "`/opt/etc/init.d/S10cron restart`" > /dev/null
 	messageBox "Настройка завершена."
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
@@ -160,6 +180,7 @@ function scriptDelete
 	echo "Удаление DLNA Mesh helper..."
 	echo ""
 	rm -rf /opt/etc/cron.1min/dmh.sh
+	echo "`/opt/etc/init.d/S10cron restart`" > /dev/null
 	messageBox "Скрипт - удалён."
 	echo ""
 	rm -rf $0
@@ -168,8 +189,7 @@ function scriptDelete
 function mainMenu
 	{
 	headLine "DLNA Mesh helper"
-	if [ -f "/opt/etc/ndm/wan.d/dmh.sh" ];then
-	
+	if [ -f "/opt/etc/cron.1min/dmh.sh" ];then
 			showText "\tОбнаружен настроенный скрипт."
 			echo ""
 			echo -e "\t1: Новая конфигурация"
