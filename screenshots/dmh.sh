@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION="beta 1"
-BUILD="0806.1"
+BUILD="0806.2"
 CRON_FILE="/opt/var/spool/cron/crontabs/root"
 COLUNS="`stty -a | awk -F"; " '{print $3}' | grep "columns" | awk -F" " '{print $2}'`"
 
@@ -147,8 +147,8 @@ function scriptSetup	#1 - скрыть вариант "выход" из меню
 		messageBox "Сегмент не выбран." "\033[91m"
 		exit
 	fi
-	echo -e "#!/bin/sh\n\nif [ ! \"\`ndmc -c show dlna | sed 's/^[ ]*//' | grep '^running: ' | awk -F\": \" '{print \$2}'\`\" = \"yes\" ];then\n$TEXT\n\tndmc -c system configuration save\n\tlogger \"DMh: настройки DLNA-сервера - исправлены.\"\nfi" > /opt/etc/ndm/wan.d/dmh.sh
-	chmod +x /opt/etc/ndm/wan.d/dmh.sh
+	echo -e "#!/bin/sh\n\nif [ ! \"\`ndmc -c show dlna | sed 's/^[ ]*//' | grep '^running: ' | awk -F\": \" '{print \$2}'\`\" = \"yes\" ];then\n$TEXT\n\tndmc -c system configuration save\n\tlogger \"DMh: настройки DLNA-сервера - исправлены.\"\nfi" > /opt/etc/cron.1min/dmh.sh
+	chmod +x /opt/etc/cron.1min/dmh.sh
 	messageBox "Настройка завершена."
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
@@ -159,7 +159,7 @@ function scriptDelete
 	{
 	echo "Удаление DLNA Mesh helper..."
 	echo ""
-	rm -rf /opt/etc/ndm/wan.d/dmh.sh
+	rm -rf /opt/etc/cron.1min/dmh.sh
 	messageBox "Скрипт - удалён."
 	echo ""
 	rm -rf $0
