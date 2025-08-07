@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION="beta 1"
-BUILD="0807.x1"
+BUILD="0807.1"
 CRON_FILE="/opt/var/spool/cron/crontabs/root"
 COLUNS="`stty -a | awk -F"; " '{print $3}' | grep "columns" | awk -F" " '{print $2}'`"
 
@@ -112,29 +112,12 @@ function copyRight	#1 - название	#2 - год
 	read -t 1 -n 1 -r -p " $1 $VERSION`awk -v i=$SIZE 'BEGIN { OFS=" "; $i=" "; print }'`$COPYRIGHT" keypress
 	}
 
-function opkgCron
-	{
-	if [ -z "`opkg list-installed | grep "^cron"`" ];then
-		showMessage "Установка cron..."
-		echo "`opkg update`" > /dev/null
-		echo "`opkg install cron`" > /dev/null
-		echo ""
-		if [ -z "`opkg list-installed | grep "^cron"`" ];then
-			messageBox "`showMessage "Не удалось установить: cron"`"
-			echo ""
-			showText "\tВы можете попробовать установить пакет cron вручную, командами:"
-			showText "\t\t# opkg update"
-			showText "\t\t# opkg install cron"
-			exit
-		fi
-	fi
-	}
-
 function scriptSetup	#1 - скрыть вариант "выход" из меню накопителей
 	{
 	LIST=`ndmc -c show interface | sed 's/^[ ]*//' | grep '^id: \|^description: \|^address: ' | grep -B 2 '^address: ' | grep '^id: \|^description: \|^address: ' | grep -A 1 '^id: Bridge' | sed -e "s/^id: /id: @@/g;s/^description: /description: \\t/g" | awk -F": " '{print $2}' | sed ':a;N;$!ba;s/\n//g' | sed -e "s/@@/\\n/g" | grep -v '^$'`
 	if [ -z "$LIST" ];then
 		messageBox "Сегменты - отсутствуют." "\033[91m"
+		echo ""
 		exit
 	fi
 	SEGMENTS=`echo "$LIST" | awk '{print NR":\t"$0}'`
@@ -162,12 +145,11 @@ function scriptSetup	#1 - скрыть вариант "выход" из меню
 		TEXT=`echo "$REPLY" | awk -F"\t" '{print "\tndmc -c dlna interface "$2}'`
 	else
 		messageBox "Сегмент не выбран." "\033[91m"
+		echo ""
 		exit
 	fi
-	#opkgCron
-	echo -e "#!/bin/sh\n\nexport LD_LIBRARY_PATH=/lib:/usr/lib:$LD_LIBRARY_PATH\nVAR=\`ndmc -c show dlna | grep 'running: ' | awk -F\": \" '{print \$2}'\`\nif [ ! \"\`ndmc -c show dlna | sed 's/^[ ]*//' | grep '^running: ' | awk -F\": \" '{print \$2}'\`\" = \"yes\" ];then\n$TEXT\n\tndmc -c system configuration save\n\tlogger \"DMh: настройки DLNA-сервера - исправлены.\"\nfi" > /opt/etc/ndm/wan.d/dmh.sh
-	chmod +755 /opt/etc/ndm/wan.d/dmh.sh
-	#echo "`/opt/etc/init.d/S10cron restart`" > /dev/null
+	echo -e "#!/bin/sh\n\nexport LD_LIBRARY_PATH=/lib:/usr/lib:$LD_LIBRARY_PATH\nif [ ! \"\`ndmc -c show dlna | sed 's/^[ ]*//' | grep '^running: ' | awk -F\": \" '{print \$2}'\`\" = \"yes\" ];then\n$TEXT\n\tndmc -c system configuration save\n\tlogger \"DMh: настройки DLNA-сервера - исправлены.\"\nfi" > /opt/etc/ndm/wan.d/dmh.sh
+	chmod 755 /opt/etc/ndm/wan.d/dmh.sh
 	messageBox "Настройка завершена."
 	echo ""
 	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
@@ -179,8 +161,9 @@ function scriptDelete
 	echo "Удаление DLNA Mesh helper..."
 	echo ""
 	rm -rf /opt/etc/ndm/wan.d/dmh.sh
-	echo "`/opt/etc/init.d/S10cron restart`" > /dev/null
 	messageBox "Скрипт - удалён."
+	echo ""
+	read -n 1 -r -p "(Чтобы продолжить - нажмите любую клавишу...)" keypress
 	echo ""
 	rm -rf $0
 	}
@@ -189,7 +172,7 @@ function mainMenu
 	{
 	headLine "DLNA Mesh helper"
 	if [ -f "/opt/etc/ndm/wan.d/dmh.sh" ];then
-			showText "\tОбнаружен настроенный скрипт."
+			showText "Обнаружен настроенный скрипт."
 			echo ""
 			echo -e "\t1: Новая конфигурация"
 			echo -e "\t2: Удалить скрипт"
@@ -211,5 +194,23 @@ function mainMenu
 	rm -rf $0
 	exit
 	}
+
+echo;while [ -n "$1" ];do
+case "$1" in
+
+-v)	echo "$0 $VERSION build $BUILD"
+	exit
+	;;
+
+*)	headLine "DLNA Mesh helper"
+	messageBox "Введён некорректный ключ." "\033[91m"
+	echo ""
+	echo "Доступные ключи:"
+	showText "\t-v: Отображение текущей версии DMh"
+	echo ""
+	exit
+	;;
+	
+esac;shift;done
 
 mainMenu
